@@ -14,6 +14,7 @@ public class PhoneBookDAOImpl implements PhoneBookDAO {
 	private ResultSet rs;
 	private PreparedStatement pstmt;
 	
+	
 
 private void getConnection( )throws ClassNotFoundException,SQLException{
 	if(conn== null) {
@@ -89,11 +90,11 @@ public List<PhoneBookVo> search(PhoneBookVo vo) {
 		getConnection();
 		String sql ="SELECCT id , name, hp, tel From Phone_book WHERE id=?";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, id);
+		pstmt.setLong(1, vo.getId());
 		ResultSet r= pstmt.executeQuery();
 		
 		if(r.next()) {
-			String id=r.getString("id");
+			Long id=r.getLong("id");
 			String name=r.getString("name");
 			String hp=r.getString("hp");
 			String tel=r.getString("tel");
@@ -105,5 +106,7 @@ public List<PhoneBookVo> search(PhoneBookVo vo) {
 	} finally {
 		
 	}
+	return null;
+
 }
 }
