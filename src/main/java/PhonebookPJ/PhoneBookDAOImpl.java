@@ -38,17 +38,18 @@ public List<PhoneBookVo> getlist() {
 		
 		ResultSet r= pstmt.executeQuery();
 		
-		if(r.next()) {
+		 while(true) {
+			 if(r.next()) {
 			String id= r.getString("id");
 			String name=r.getString("name");
 			String tel=r.getString("tel");
 			String hp=r.getString("hp");
 			
 		
-		}} catch(Exception e) {
+		}
+			 }
+		 } catch(Exception e) {
 			e.printStackTrace();
-		}finally {
-			
 		}
 	return list;
 
@@ -74,14 +75,25 @@ public boolean insert(PhoneBookVo vo) {
 		
 	} catch(Exception e) {
 		e.printStackTrace();
-	} finally {
-		
-	}
+	} 
 	return result;
 }
 @Override
 public boolean delete(PhoneBookVo vo) {
-	// TODO Auto-generated method stub
+	boolean result = false;
+	try {
+		getConnection();
+		
+		String sql="Delete FROM Phone_book Where id=?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, vo.getId());
+		int r = pstmt.executeUpdate();
+		
+		if(r>0)result = true;
+		
+	} catch (Exception e) {
+	     e.printStackTrace();
+	}
 	return false;
 }
 @Override
@@ -103,9 +115,7 @@ public List<PhoneBookVo> search(PhoneBookVo vo) {
 		}catch(Exception e) {
 			e.printStackTrace();
 		
-	} finally {
-		
-	}
+	} 
 	return null;
 
 }
