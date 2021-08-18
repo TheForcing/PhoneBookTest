@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface PhoneBookDAO {
 	public List<PhoneBookVo> getlist();
-	public String insert(PhoneBookVo vo);
-	public String delete(PhoneBookVo vo);
-	public String search(PhoneBookVo vo);
-	public String exit(PhoneBookVo vo);
+	public boolean insert(PhoneBookVo vo);
+	public boolean delete(PhoneBookVo vo);
+	public List<PhoneBookVo> search(PhoneBookVo vo);
+	
 
 }

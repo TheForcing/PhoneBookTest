@@ -1,6 +1,7 @@
 package PhonebookPJ;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -51,6 +52,13 @@ public class PhoneBookServlet extends HttpServlet{
 		   vo.setHp(hp);
 		   vo.setTel(tel);
 		   System.out.println("PhoneBookVo:"+vo);
+		   
+		  PhoneBookDAO dao= new PhoneBookDAOImpl();
+		  dao.insert(vo);
+		  
+			
+			
+		};
 	   }
 	}
 	
