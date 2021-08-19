@@ -5,10 +5,11 @@ import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+@WebServlet(name="PhoneBookServle", urlPatterns="/pb")
 public class PhoneBookServlet extends HttpServlet{
 
 	@Override
@@ -24,7 +25,7 @@ public class PhoneBookServlet extends HttpServlet{
 		  List<PhoneBookVo> list= dao.getlist();
 		  
 		  req.setAttribute("list", list);
-		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/users/index.jsp");
+		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/users/List.jsp");
 		  
 	    rd.forward(req, resp);
 	  }
@@ -47,15 +48,23 @@ public class PhoneBookServlet extends HttpServlet{
 		 vo.setTel(tel);
 		 
 		 PhoneBookDAO dao = new PhoneBookDAOImpl();
-		 boolean insertedCount = dao.insert(vo);
+		 int insertedCount = dao.insert(vo);
 		 
-		 resp.sendRedirect(req.getContextPath()+"/WEB-INF/users/index.jsp");
+		 resp.sendRedirect(req.getContextPath()+"/pb");
 		 
+	 } else if("delete".equals(actionName)){
+		 Long id= Long.valueOf(req.getParameter("id"));
+		 PhoneBookDAO dao = new PhoneBookDAOImpl();
+		 
+		 int deletedCount =dao.delete(id);
+		 resp.sendRedirect(req.getContextPath()+"/WEB-INF/users/List.jsp");
 	 } else {
 		 doGet(req,resp);
 	 }
+		
+	 }
 	   }
-}
+
 	
 	
 	

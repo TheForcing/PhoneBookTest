@@ -9,113 +9,161 @@ import java.util.List;
 
 
 public class PhoneBookDAOImpl implements PhoneBookDAO {
-
-	private static Connection conn;
-	private ResultSet rs;
-	private PreparedStatement pstmt;
-	
 	
 
-private void getConnection( )throws ClassNotFoundException,SQLException{
-	if(conn== null) {
-		String url= "jdbc:oracle:thin:@localhost:1521:xe";
-		String user="C##bituser";
-		String pw="bituser";
-		
+private Connection getConnection( )throws SQLException{
+	Connection conn = null;
+	try {
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		conn= DriverManager.getConnection(url,user,pw);
+		conn= DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "c##bituser","bituser");
+	} catch(ClassNotFoundException e) {
+		e.printStackTrace();
 	}
+	return conn;
 }
 @Override
 public List<PhoneBookVo> getlist() {
-	PhoneBookVo vo= null;
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs= null;
 	List<PhoneBookVo> list = new ArrayList<PhoneBookVo>();
 	try {
-		getConnection();
+		conn = getConnection();
 		
-		String sql= "SELECT id, name, hp, tel from Phone_book Where id=?";
-		PreparedStatement pstmt= conn.prepareStatement(sql);
+		String sql= "SELECT id, name, hp, tel"+" from Phone_book";
+		pstmt= conn.prepareStatement(sql);
 		
-		ResultSet r= pstmt.executeQuery();
+		 rs= pstmt.executeQuery();
 		
-		 while(true) {
-			 if(r.next()) {
-			String id= r.getString("id");
-			String name=r.getString("name");
-			String tel=r.getString("tel");
-			String hp=r.getString("hp");
+		 while((rs.next())) {
+			  
+			Long id= rs.getLong("id");
+			String name=rs.getString("name");
+			String hp=rs.getString("hp");
+			String tel=rs.getString("tel");
+			
+			PhoneBookVo vo= new PhoneBookVo();
+			vo.setId(id);
+			vo.setName(name);
+			vo.setHp(hp);
+			vo.setTel(tel);
+			
+			list.add(vo);
 			
 		
 		}
-			 }
+			 
 		 } catch(Exception e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				rs.close();
+				pstmt.close();
+				conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			
+			}
+			
+			}return list;
 		}
-	return list;
+	
 
-}
+
 
 @Override
-public boolean insert(PhoneBookVo vo) {
-	boolean result = false;
+public int insert(PhoneBookVo vo) {
+	int count= 0;
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+
  try{
-		getConnection();
+	conn=getConnection();
 		
-		String sql= "INSERT INTO PHONE_BOOK VALUES(LPAD(Seq_phone_book.nextval,4,'0'),:id,:name,:hp,:tel)";
-		PreparedStatement pstmt = conn.prepareStatement(sql);
+		String sql= "INSERT INTO PHONE_BOOK"+"(id, name, hp, tel)"+
+		"VALUES(seq_phone_book.NEXTVAL,?,?,?,?)";
+		 pstmt = conn.prepareStatement(sql);
 		
 		pstmt.setLong(1, vo.getId());
 		pstmt.setString(2, vo.getName());
 		pstmt.setString(3, vo.getHp());
 		pstmt.setString(4, vo.getTel());
 		
-		int r= pstmt.executeUpdate();
-		
-		if(r>0) result = true;
-		
+		count= pstmt.executeUpdate()
+;		
 	} catch(Exception e) {
 		e.printStackTrace();
-	} 
-	return result;
+	} finally {
+		try {
+			conn.close();
+			pstmt.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	return count;
 }
 @Override
-public boolean delete(PhoneBookVo vo) {
-	boolean result = false;
+public int delete(Long pk) {
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	
+	int deletedCount=0;
 	try {
-		getConnection();
+		conn=getConnection();
 		
-		String sql="Delete FROM Phone_book Where id=?";
-		PreparedStatement pstmt = conn.prepareStatement(sql);
-		pstmt.setLong(1, vo.getId());
-		int r = pstmt.executeUpdate();
+		String sql="Delete FROM Phone_book ";
+		 pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, pk);
 		
-		if(r>0)result = true;
+		deletedCount = pstmt.executeUpdate();
+		
+		
 		
 	} catch (Exception e) {
 	     e.printStackTrace();
+	} finally {
+		try {
+			pstmt.close();
+			conn.close();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
-	return false;
+	return deletedCount;
 }
 @Override
 public List<PhoneBookVo> search(PhoneBookVo vo) {
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
 	try {
-		getConnection();
-		String sql ="SELECCT id , name, hp, tel From Phone_book WHERE id=?";
-		PreparedStatement pstmt = conn.prepareStatement(sql);
+		conn=getConnection();
+		String sql ="SELECCT id , name, hp, tel From Phone_book";
+		 pstmt = conn.prepareStatement(sql);
 		pstmt.setLong(1, vo.getId());
-		ResultSet r= pstmt.executeQuery();
+		 rs= pstmt.executeQuery();
 		
-		if(r.next()) {
-			Long id=r.getLong("id");
-			String name=r.getString("name");
-			String hp=r.getString("hp");
-			String tel=r.getString("tel");
+		if(rs.next()) {
+			Long id=rs.getLong("id");
+			String name=rs.getString("name");
+			String hp=rs.getString("hp");
+			String tel=rs.getString("tel");
 		}
 		
 		}catch(Exception e) {
 			e.printStackTrace();
 		
-	} 
+	} finally {
+		try {
+			pstmt.close();
+			conn.close();
+			rs.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	return null;
 
 }

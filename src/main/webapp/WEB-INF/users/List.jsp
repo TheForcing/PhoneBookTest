@@ -1,23 +1,26 @@
 <%@page import="PhonebookPJ.PhoneBookVo" %>
-<%@page import= "java.util.List" %>
+<%@page import= "java.util.List" %>  
+<%@page import="PhonebookPJ.PhoneBookDAOImpl"%>
+<%@page import="PhonebookPJ.PhoneBookDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%
-List<PhoneBookVo> list =(List<PhoneBookVo>)request.getAttribute("list");
+
+<% 
+PhoneBookDAO dao = new PhoneBookDAOImpl();
+//	이메일 리스트 받아오기
+List<PhoneBookVo> list = dao.getlist();
 %>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>주소록 Servlet</title>
+<title>PhoneBookList</title>
 </head>
 <body>
-   <h1>새 주소 등록</h1>
-   
-   <% for (PhoneBookVo vo: list) { %>
+     <h1>주소록 Servlet</h1>
+      <h3>목록</h3>
+     
+           <% for (PhoneBookVo vo: list) { %>
    <table border="1">
    <tr>
        <th>이름</th>
@@ -33,7 +36,7 @@ List<PhoneBookVo> list =(List<PhoneBookVo>)request.getAttribute("list");
     </tr>
     <tr>
        <td colspan="2">
-          <form action="<%= request.getContextPath() %>/ph"
+          <form action="<%= request.getContextPath() %>/WEB-INF/user/delete.jsp"
           method="Post">
           <input type="hidden" name="a" value="delete" />
           <input type="hidden" name="id" value="<%= vo.getId() %>" />
@@ -44,8 +47,10 @@ List<PhoneBookVo> list =(List<PhoneBookVo>)request.getAttribute("list");
        </table> 
 <br />
 <% } %>
+      
+
        <p>
-         <a href="<%= request.getContextPath() %>/pb?a=form">삭제 후 목록</a>
+         <a href="<%= request.getContextPath() %>/pb?a=form">새 주소 추가</a>
        </p>
 </body>
 </html>

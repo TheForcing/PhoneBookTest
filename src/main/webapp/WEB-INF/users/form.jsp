@@ -7,8 +7,8 @@
 <title>주소록 servlet</title>
 </head>
 <body>
-  <h1>새 주소 등록</h1>
-  <form action="%= request.getContextPath() %>/pb"
+  <h1>목록</h1>
+  <form action="<%= request.getContextPath() %>/pb"
    method="POST">
    
    <input type="hidden" value="add" name="a"/>
@@ -19,12 +19,13 @@
    <label for="tel">전화번호</label>
    <input type="text" name="tel" id="tel"/><br/>
    
-   <input type="submit" value="등록" />
+   
+   <input type="submit" value="주소 등록" >
    
    </form>
    
    <p>
-      <a href="<%= request.getContextPath() %>/pb/">목록 보기</a>
+      <a href="<%= request.getContextPath() %>/pb?a=List">목록 보기</a>
    </p> 
    
 </body>
