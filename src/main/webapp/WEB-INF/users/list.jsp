@@ -6,9 +6,10 @@
     pageEncoding="UTF-8"%>
 
 <% 
-PhoneBookDAO dao = new PhoneBookDAOImpl();
+
 //	이메일 리스트 받아오기
-List<PhoneBookVo> list = dao.getlist();
+List<PhoneBookVo> list = (List<PhoneBookVo>)request.getAttribute("list");
+System.out.println(list);
 %>
 <!DOCTYPE html>
 <html>
@@ -19,24 +20,31 @@ List<PhoneBookVo> list = dao.getlist();
 <body>
      <h1>주소록 Servlet</h1>
       <h3>목록</h3>
-     
-           <% for (PhoneBookVo vo: list) { %>
+     <form action="<%=request.getContextPath() %>/pb?a=search"
+        method="get">
+        <input type="hidden" name="a" value="search"/>
+        <input type="text" name="search" />
+        
+        <input type="submit" value="검색" />
+        </form>
+    <% for (PhoneBookVo vo: list) { %>
    <table border="1">
+     
    <tr>
        <th>이름</th>
-       <td>vo.getName()</td>
+       <td><%= vo.getName()%></td>
     </tr>
    <tr>
        <th>휴대전화</th>
-       <td>vo.getHp()</td>
+       <td><%=vo.getHp() %></td>
    </tr>
    <tr>
        <th>전화번호</th>
-       <td>vo.getTel()</td>
+       <td><%=vo.getTel() %></td>
     </tr>
     <tr>
        <td colspan="2">
-          <form action="<%= request.getContextPath() %>/WEB-INF/user/delete.jsp"
+          <form action="<%= request.getContextPath() %>/pb?a=delete"
           method="Post">
           <input type="hidden" name="a" value="delete" />
           <input type="hidden" name="id" value="<%= vo.getId() %>" />
@@ -44,9 +52,15 @@ List<PhoneBookVo> list = dao.getlist();
           </form>
         </td>
        </tr>
+     
+       
+      
        </table> 
+       <% } %>
 <br />
-<% } %>
+ 
+
+
       
 
        <p>

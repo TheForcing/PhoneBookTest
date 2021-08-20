@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,18 +25,18 @@ private Connection getConnection( )throws SQLException{
 @Override
 public List<PhoneBookVo> getlist() {
 	Connection conn = null;
-	PreparedStatement pstmt = null;
+	Statement stmt = null;
 	ResultSet rs= null;
 	List<PhoneBookVo> list = new ArrayList<PhoneBookVo>();
 	try {
 		conn = getConnection();
 		
 		String sql= "SELECT id, name, hp, tel"+" from Phone_book";
-		pstmt= conn.prepareStatement(sql);
+		stmt= conn.createStatement();
 		
-		 rs= pstmt.executeQuery();
+		 rs= stmt.executeQuery(sql);
 		
-		 while((rs.next())) {
+		 while(rs.next()) {
 			  
 			Long id= rs.getLong("id");
 			String name=rs.getString("name");
@@ -58,16 +59,17 @@ public List<PhoneBookVo> getlist() {
 		}finally {
 			try {
 				rs.close();
-				pstmt.close();
+				stmt.close();
 				conn.close();
 			}catch(Exception e) {
 				e.printStackTrace();
 			
 			}
 			
-			}return list;
+			}
+	return list;
 		}
-	
+		
 
 
 
@@ -81,13 +83,13 @@ public int insert(PhoneBookVo vo) {
 	conn=getConnection();
 		
 		String sql= "INSERT INTO PHONE_BOOK"+"(id, name, hp, tel)"+
-		"VALUES(seq_phone_book.NEXTVAL,?,?,?,?)";
+		"VALUES(seq_phone_book.NEXTVAL,?,?,?)";
 		 pstmt = conn.prepareStatement(sql);
 		
-		pstmt.setLong(1, vo.getId());
-		pstmt.setString(2, vo.getName());
-		pstmt.setString(3, vo.getHp());
-		pstmt.setString(4, vo.getTel());
+		
+		pstmt.setString(2, vo.getHp());
+		pstmt.setString(1, vo.getName());
+		pstmt.setString(3, vo.getTel());
 		
 		count= pstmt.executeUpdate()
 ;		
@@ -112,7 +114,7 @@ public int delete(Long pk) {
 	try {
 		conn=getConnection();
 		
-		String sql="Delete FROM Phone_book ";
+		String sql="Delete FROM Phone_book Where id=? ";
 		 pstmt = conn.prepareStatement(sql);
 		pstmt.setLong(1, pk);
 		
@@ -134,22 +136,29 @@ public int delete(Long pk) {
 	return deletedCount;
 }
 @Override
-public List<PhoneBookVo> search(PhoneBookVo vo) {
+public List<PhoneBookVo> search(String vo) {
+	List<PhoneBookVo> list= new ArrayList<PhoneBookVo>();
 	Connection conn = null;
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	try {
 		conn=getConnection();
-		String sql ="SELECCT id , name, hp, tel From Phone_book";
+		String sql ="SELECT id , name, hp, tel From Phone_book Where name like ?";
 		 pstmt = conn.prepareStatement(sql);
-		pstmt.setLong(1, vo.getId());
+		pstmt.setString(1,"%" +vo+  "%");
 		 rs= pstmt.executeQuery();
 		
-		if(rs.next()) {
+		while(rs.next()) {
 			Long id=rs.getLong("id");
 			String name=rs.getString("name");
 			String hp=rs.getString("hp");
 			String tel=rs.getString("tel");
+		  PhoneBookVo vo2= new PhoneBookVo();
+		  vo2.setId(id);
+		  vo2.setName(name);
+		  vo2.setHp(hp);
+		  vo2.setTel(tel);
+		  list.add(vo2);
 		}
 		
 		}catch(Exception e) {
@@ -164,7 +173,7 @@ public List<PhoneBookVo> search(PhoneBookVo vo) {
 			e.printStackTrace();
 		}
 	}
-	return null;
+	return list;
 
 }
 }

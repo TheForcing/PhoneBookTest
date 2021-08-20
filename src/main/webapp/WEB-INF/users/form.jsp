@@ -15,7 +15,7 @@
    <label for="Name">이름</label>
    <input type="text" name="name" id="name" /><br/>
    <label for= "hp">휴대전화</label>
-   <input type="text" name="text" id="text"/><br/>
+   <input type="text" name="hp" id="hp"/><br/>
    <label for="tel">전화번호</label>
    <input type="text" name="tel" id="tel"/><br/>
    

@@ -7,7 +7,7 @@ public interface PhoneBookDAO {
 	public List<PhoneBookVo> getlist();
 	public int insert(PhoneBookVo vo);
 	public int delete(Long pk);
-	public List<PhoneBookVo> search(PhoneBookVo vo);
+	public List<PhoneBookVo> search(String vo);
 	
 
 }
